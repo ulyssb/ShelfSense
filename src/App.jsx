@@ -1,21 +1,16 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
+import { Routes, Route } from 'react-router-dom'
+import Home from './pages/Home.jsx'
+import GetStarted from './pages/GetStarted.jsx'
+import Recommendations from './pages/Recommendations.jsx'
 
 function App() {
-
   return (
-    <>
-      <div>
-      </div>
-      <h1>ShelfSense</h1>
-      <div className="card">
-        <p>
-          AI powered book recommandations based on your bookshelf !
-        </p>
-      </div>
-    </>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="/get-started" element={<GetStarted />} />
+      <Route path="/recommendations" element={<Recommendations />} />
+    </Routes>
   )
 }
 

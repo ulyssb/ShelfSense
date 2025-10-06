@@ -1,0 +1,429 @@
+/* Recommendations Page Styles */
+
+/* No Recommendations State */
+.no-recommendations-hero {
+  padding: 4rem 0;
+  text-align: center;
+  background: linear-gradient(135deg, var(--background-secondary) 0%, var(--background) 100%);
+  border-radius: 16px;
+  margin-bottom: 3rem;
+}
+
+.no-recommendations-title {
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.no-recommendations-subtitle {
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.get-started-button {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: white;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 1rem 2.5rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.get-started-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+.how-it-works-preview {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.how-it-works-preview h2 {
+  margin-bottom: 2rem;
+  color: var(--text);
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.steps-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.step-preview {
+  text-align: center;
+  padding: 1.5rem;
+  background: var(--background-secondary);
+  border-radius: 12px;
+  border: 1px solid var(--border);
+}
+
+.step-preview .step-number {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  margin: 0 auto 1rem auto;
+}
+
+.step-preview h3 {
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.step-preview p {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+/* Hero Section */
+.recommendations-hero {
+  padding: 3rem 0;
+  text-align: center;
+  background: linear-gradient(135deg, var(--background-secondary) 0%, var(--background) 100%);
+  border-radius: 16px;
+  margin-bottom: 3rem;
+}
+
+.recommendations-title {
+  margin-bottom: 1rem;
+  color: var(--text);
+  font-size: 3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  line-height: 1.1;
+}
+
+.recommendations-subtitle {
+  color: var(--text-secondary);
+  max-width: 600px;
+  margin: 0 auto 2rem auto;
+  font-size: 1.2rem;
+  line-height: 1.6;
+}
+
+.regenerate-button {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: white;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.8rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.regenerate-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(79, 70, 229, 0.4);
+}
+
+/* Loading State */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid var(--border);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Recommendations Grid */
+.recommendations-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+/* Book Card */
+.book-card {
+  background: var(--background-secondary);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  gap: 1.5rem;
+}
+
+.book-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.book-cover {
+  flex-shrink: 0;
+  width: 120px;
+  height: 160px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.book-cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.book-cover-fallback {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+}
+
+.cover-emoji {
+  font-size: 3rem;
+  margin-bottom: 0.5rem;
+}
+
+.book-rating {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(255, 255, 255, 0.9);
+  color: var(--text);
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.book-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.book-title {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.book-author {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 1rem;
+  font-style: italic;
+}
+
+.book-genre {
+  display: inline-block;
+  background: var(--primary);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  align-self: flex-start;
+}
+
+.book-description {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+  line-height: 1.5;
+  flex-grow: 1;
+}
+
+.recommendation-reason {
+  background: rgba(79, 70, 229, 0.1);
+  padding: 1rem;
+  border-radius: 8px;
+  border-left: 4px solid var(--primary);
+}
+
+.recommendation-reason strong {
+  color: var(--primary);
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.recommendation-reason p {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.book-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.add-to-list-button,
+.find-book-button {
+  flex: 1;
+  padding: 0.6rem 1rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.add-to-list-button {
+  background: var(--primary);
+  color: white;
+}
+
+.add-to-list-button:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+.find-book-button {
+  background: transparent;
+  color: var(--primary);
+  border: 1px solid var(--primary);
+}
+
+.find-book-button:hover {
+  background: var(--primary);
+  color: white;
+  transform: translateY(-1px);
+}
+
+/* CTA Section */
+.recommendations-cta {
+  padding: 2rem 0;
+  margin-bottom: 2rem;
+}
+
+.recommendations-cta .cta-card {
+  text-align: center;
+  background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--primary) 100%);
+  color: white;
+  border: none;
+  box-shadow: 0 8px 32px rgba(20, 184, 166, 0.3);
+  padding: 2rem;
+}
+
+.recommendations-cta h2 {
+  margin: 0 0 1rem 0;
+  font-size: 1.8rem;
+  font-weight: 700;
+}
+
+.recommendations-cta p {
+  margin: 0 0 1.5rem 0;
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+.recommendations-cta .cta-button {
+  background: white;
+  color: var(--accent-secondary);
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.8rem 2rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.recommendations-cta .cta-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .recommendations-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+  
+  .book-card {
+    flex-direction: column;
+    text-align: center;
+  }
+  
+  .book-cover {
+    align-self: center;
+  }
+  
+  .book-actions {
+    flex-direction: column;
+  }
+  
+  .recommendations-title {
+    font-size: 2.5rem;
+  }
+}
