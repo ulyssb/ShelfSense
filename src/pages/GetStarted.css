@@ -1,0 +1,342 @@
+/* GetStarted Page Styles */
+
+.get-started-hero {
+  padding: 2rem 0;
+  text-align: center;
+  background: linear-gradient(135deg, var(--background-secondary) 0%, var(--background) 100%);
+  border-radius: 12px;
+  margin-bottom: 2rem;
+}
+
+.get-started-title {
+  margin-bottom: 0.75rem;
+  color: var(--text);
+  font-size: 2.5rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.get-started-subtitle {
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
+  font-size: 1.1rem;
+  line-height: 1.5;
+}
+
+.section-title {
+  text-align: center;
+  color: var(--text);
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+.get-started-main-title {
+  text-align: center;
+  color: var(--text);
+  margin-top: 4rem;
+  margin-bottom: 3rem;
+  font-size: 4rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  padding-bottom: 0.4rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Step Progress Indicator */
+.step-progress {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin: 2rem;
+}
+
+.step-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1rem;
+  transition: all 0.3s ease;
+}
+
+.step-circle.active {
+  background: var(--primary);
+  color: white;
+}
+
+.step-circle.inactive {
+  background: var(--border);
+  color: var(--text-secondary);
+}
+
+/* Step Cards */
+.step-card {
+  text-align: center;
+  border: none;
+  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+  margin: 3rem auto 2rem auto;
+  padding: 2rem;
+  max-width: 800px;
+  border-radius: 1rem;
+}
+
+
+.step-card.step-1 {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
+  color: white;
+}
+
+.step-card.step-2 {
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+}
+
+.step-card.step-3 {
+  background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--primary) 100%);
+  color: white;
+  box-shadow: 0 4px 16px rgba(20, 184, 166, 0.3);
+}
+
+.step-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.4rem;
+}
+
+.step-description {
+  margin: 0 0 1.5rem 0;
+  opacity: 0.9;
+}
+
+/* File Upload */
+.file-upload-container {
+  margin-bottom: 1rem;
+}
+
+.file-input {
+  display: none;
+}
+
+.file-upload-button {
+  display: inline-block;
+  background: white;
+  color: var(--primary);
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.file-upload-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.file-selected {
+  margin-bottom: 1rem;
+}
+
+.file-name {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+.image-preview {
+  margin: 1rem 0;
+  display: flex;
+  justify-content: center;
+}
+
+.preview-image {
+  max-width: 200px;
+  max-height: 150px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  object-fit: cover;
+}
+
+/* Genre Selection */
+.genre-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+  max-width: 500px;
+  margin: 0 auto 1.5rem auto;
+}
+
+.genre-label {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.genre-label.selected {
+  background: rgba(255, 255, 255, 0.3);
+  border: 1px solid white;
+}
+
+.genre-label:not(.selected) {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.genre-checkbox {
+  margin: 0;
+}
+
+.selected-genres {
+  margin-bottom: 1rem;
+}
+
+.selected-genres-text {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.9rem;
+}
+
+/* Results Box */
+.results-box {
+  background: rgba(255, 255, 255, 0.2);
+  padding: 1.5rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+}
+
+.results-text {
+  margin: 0;
+  font-size: 1rem;
+}
+
+/* Buttons */
+.primary-button {
+  background: white;
+  border: none;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.primary-button.step-1 {
+  color: var(--primary);
+}
+
+.primary-button.step-2 {
+  color: var(--accent);
+}
+
+.primary-button.step-3 {
+  color: var(--accent-secondary);
+}
+
+.secondary-button {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: 1px solid white;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: 0.6rem 1.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.secondary-button:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Navigation */
+.navigation-container {
+  text-align: center;
+  gap: 1rem;
+}
+
+.nav-button {
+  font-size: 0.9rem;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-right: 1rem;
+}
+
+.nav-button.previous {
+  background: transparent;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+}
+
+.nav-button.previous:hover {
+  background: var(--background-secondary);
+}
+
+.nav-button.next {
+  background: var(--primary);
+  color: white;
+  border: none;
+}
+
+.nav-button.next:hover {
+  background: var(--primary-hover);
+}
+
+/* Help Section */
+.help-section {
+  padding: 1rem 0;
+  margin-bottom: 2rem;
+}
+
+.help-card {
+  text-align: center;
+}
+
+.help-title {
+  margin: 0 0 0.5rem 0;
+  color: var(--text);
+}
+
+.help-text {
+  margin: 0 0 1rem 0;
+  opacity: 0.8;
+}
+
+.back-link {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease;
+}
+
+.back-link:hover {
+  color: var(--primary-hover);
+}
