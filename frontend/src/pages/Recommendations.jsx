@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
 import LoadingSpinner from '../components/LoadingSpinner.jsx'
+import Toast from '../components/Toast.jsx'
 import { useRecommendations } from '../hooks/useRecommendations.js'
+import { useReadingList } from '../hooks/useReadingList.js'
 import { generateRecommendations } from '../services/recommendationService.js'
 import { getPreviouslyChosenBooks, addToPreviouslyChosenBooks } from '../utils/previouslyChosenBooks.js'
 import { getBookCovers } from '../utils/bookCoverService.js'
@@ -12,7 +14,9 @@ import './Recommendations.css'
 
 function Recommendations() {
   const { recommendations, hasRecommendations, loading, saveRecommendations } = useRecommendations()
+  const { addToReadingList, isBookAdded } = useReadingList()
   const [isRegenerating, setIsRegenerating] = useState(false)
+  const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' })
 
   const handleRegenerateRecommendations = async () => {
     setIsRegenerating(true)
@@ -53,6 +57,26 @@ function Recommendations() {
     }
   }
 
+  const handleAddToReadingList = (book) => {
+    const result = addToReadingList(book)
+    setToast({
+      isVisible: true,
+      message: result.message,
+      type: result.success ? 'success' : 'error'
+    })
+  }
+
+  const handleToastClose = () => {
+    setToast({ isVisible: false, message: '', type: 'success' })
+  }
+
+  const handleFindBook = (book) => {
+    const url = `https://bookshop.org/search?keywords=${encodeURIComponent(
+      `${book.title} ${book.author}`
+    )}`;
+    window.open(url, "_blank");
+  }
+
   if (loading) {
     return (
       <>
@@ -90,6 +114,12 @@ function Recommendations() {
   return (
     <>
       <Navbar />
+      <Toast 
+        isVisible={toast.isVisible}
+        message={toast.message}
+        type={toast.type}
+        onClose={handleToastClose}
+      />
       <main>
         <section className="recommendations-hero">
           <h1 className="recommendations-title">
@@ -148,10 +178,17 @@ function Recommendations() {
                 </div>
                 
                 <div className="book-actions">
-                  <button className="add-to-list-button">
-                    Add to Reading List
+                  <button 
+                    className={`add-to-list-button ${isBookAdded(book.title) ? 'disabled' : ''}`}
+                    onClick={() => handleAddToReadingList(book)}
+                    disabled={isBookAdded(book.title)}
+                  >
+                    {isBookAdded(book.title) ? 'Added to List' : 'Add to Reading List'}
                   </button>
-                  <button className="find-book-button">
+                  <button 
+                    className="find-book-button"
+                    onClick={() => handleFindBook(book)}
+                  >
                     Find This Book
                   </button>
                 </div>

@@ -16,6 +16,7 @@ function Navbar() {
           <Link to="/get-started" className="nav-link">Get started</Link>
         )}
         <Link to="/recommendations" className="nav-link">Recommendations</Link>
+        <Link to="/reading-list" className="nav-link">Reading List</Link>
       </nav>
     </header>
   )
