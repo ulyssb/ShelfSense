@@ -26,8 +26,8 @@ app.post("/analyze-image", async (req, res) => {
 // Recommend books given current list + genre preferences
 app.post("/recommend-books", async (req, res) => {
   try {
-    const { currentBooks, preferredGenres } = req.body;
-    const recommendations = await aiService.getBookRecommendations(currentBooks, preferredGenres);
+    const { currentBooks, preferredGenres, previouslyChosenBooks = [] } = req.body;
+    const recommendations = await aiService.getBookRecommendations(currentBooks, preferredGenres, previouslyChosenBooks);
     res.json(recommendations); // Return array directly
   } catch (err) {
     console.error("Error:", err);

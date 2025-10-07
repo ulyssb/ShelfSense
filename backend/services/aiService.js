@@ -47,19 +47,20 @@ class AIService {
    * Get book recommendations based on current books and preferences
    * @param {string[]} currentBooks - List of current books
    * @param {string[]} preferredGenres - List of preferred genres
+   * @param {string[]} previouslyChosenBooks - List of previously recommended books to avoid
    * @returns {Promise<Array>}
    */
-  async getBookRecommendations(currentBooks, preferredGenres) {
+  async getBookRecommendations(currentBooks, preferredGenres, previouslyChosenBooks = []) {
     try {
       console.log(`[AI Service] Getting book recommendations with ${this.provider}...`);
 
       switch (this.provider.toLowerCase()) {
         case "openai":
-          return await this._recommendWithOpenAI(currentBooks, preferredGenres);
+          return await this._recommendWithOpenAI(currentBooks, preferredGenres, previouslyChosenBooks);
         case "claude":
-          return await this._recommendWithClaude(currentBooks, preferredGenres);
+          return await this._recommendWithClaude(currentBooks, preferredGenres, previouslyChosenBooks);
         case "gemini":
-          return await this._recommendWithGemini(currentBooks, preferredGenres);
+          return await this._recommendWithGemini(currentBooks, preferredGenres, previouslyChosenBooks);
         default:
           throw new Error(`Unsupported AI provider: ${this.provider}`);
       }
@@ -93,37 +94,57 @@ class AIService {
   // ---------- Private methods ----------
 
   /** OpenAI: Analyze bookshelf image */
-  async _analyzeWithOpenAI(imageUrl) {
+  async _recommendWithOpenAI(currentBooks, preferredGenres) {
     const response = await this.client.chat.completions.create({
-      model: "gpt-4o-mini", // or "gpt-4o" for stronger OCR
+      model: "gpt-4o", // full model for better reasoning & creativity
+      temperature: 1.2, // adds diversity and avoids repetitive picks
       messages: [
         {
           role: "system",
-          content:
-            "You are a vision model that looks at bookshelf photos and describes readability and possible book titles.",
+          content: `
+            You are ShelfSense, a personalized literary recommendation assistant.
+  
+            Your goal is to recommend 5–7 *diverse and relevant* books based on the user's current reading list and genre preferences.
+  
+            --- RULES ---
+            1. Do NOT include any books in the current books list.
+            2. Avoid repeating generic "bestseller" suggestions unless they are highly relevant.
+            3. Analyze the user's current books in terms of:
+               - Themes
+               - Emotional tone
+               - Writing style
+               - Genre balance
+            4. Recommend books that share these traits, but also add variety in time period, culture, or perspective.
+            5. Only include *real, existing* books (no invented titles).
+            6. Provide a short, natural reason that clearly ties each recommendation to the user's preferences.
+            7. Output *only* valid JSON — no commentary or extra text.
+  
+            --- JSON FORMAT ---
+            {
+              "recommendations": [
+                {
+                  "title": "string",
+                  "author": "string",
+                  "genre": "string",
+                  "rating": number (1–5),
+                  "description": "string",
+                  "reason": "string"
+                }
+              ]
+            }
+          `,
         },
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: `
-                You'll receive a bookshelf photo.
-                1. Tell me if you can read the titles ("all good" or "get better results by ...").
-                2. Then list any visible or likely books.
-                Return your answer as JSON:
-                {
-                  "visibility": "string",
-                  "books": ["Book 1", "Book 2", ...]
-                }
-              `,
-            },
-            { type: "image_url", image_url: { url: imageUrl } },
-          ],
+          content: `
+            Current books: ${JSON.stringify(currentBooks)}.
+            Preferred genres: ${preferredGenres.join(", ")}.
+          `,
         },
       ],
       response_format: { type: "json_object" },
     });
+  
 
     const raw = response.choices[0]?.message?.content;
     console.log(" GPT response:", raw);
@@ -138,7 +159,7 @@ class AIService {
   }
 
   /** OpenAI: Recommend books */
-  async _recommendWithOpenAI(currentBooks, preferredGenres) {
+  async _recommendWithOpenAI(currentBooks, preferredGenres, previouslyChosenBooks = []) {
     const response = await this.client.chat.completions.create({
       model: "gpt-4o-mini",
       messages: [
@@ -158,7 +179,6 @@ class AIService {
                   "genre": "string",
                   "rating": number,
                   "description": "string",
-                  "coverImage": "string or null",
                   "reason": "string"
                 }
               ]
@@ -167,11 +187,10 @@ class AIService {
             Rules:
             - The rating should be an approximate average (1–5 scale).
             - Use null for coverImage unless you can confidently provide a *real* link from Open Library or Wikipedia.
-            - Do NOT invent URLs.
-            - If unsure, set coverImage to null.
             - Return only valid JSON.
             - Do NOT include any text or explanation outside the JSON.
             - Do NOT use any other key than "recommendations".
+            - AVOID recommending books that are in the previously chosen books list.
           `,
         },
         {
@@ -179,10 +198,11 @@ class AIService {
           content: `
             Current books: ${JSON.stringify(currentBooks)}.
             Preferred genres: ${preferredGenres.join(", ")}.
+            ${previouslyChosenBooks.length > 0 ? `Avoid these books: ${JSON.stringify(previouslyChosenBooks)}.` : ''}
           `,
         },
       ],
-      response_format: { type: "json_object" }, // ✅ Forces GPT to return a valid JSON object
+      response_format: { type: "json_object" },
     });
   
     const raw = response.choices[0]?.message?.content;
