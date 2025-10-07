@@ -1,0 +1,319 @@
+import { useState } from 'react'
+import { Link } from 'react-router-dom'
+import Navbar from '../components/Navbar.jsx'
+import Footer from '../components/Footer.jsx'
+import LoadingSpinner from '../components/LoadingSpinner.jsx'
+import { useRecommendations } from '../hooks/useRecommendations.js'
+import { analyzeImage } from '../api.js'
+import { generateRecommendations } from '../services/recommendationService.js'
+import './GetStarted.css'
+
+function GetStarted() {
+  const [currentStep, setCurrentStep] = useState(1)
+  const [selectedFile, setSelectedFile] = useState(null)
+  const [selectedGenres, setSelectedGenres] = useState([])
+  const [aiResponse, setAiResponse] = useState(null)
+  const [isAnalyzing, setIsAnalyzing] = useState(false)
+  const [detectedBooks, setDetectedBooks] = useState([])
+  const [isGeneratingRecommendations, setIsGeneratingRecommendations] = useState(false)
+  const [recommendationsReady, setRecommendationsReady] = useState(false)
+  const { saveRecommendations } = useRecommendations()
+
+  const handleImageUpload = async (file) => {
+    if (!file) return
+    
+    setSelectedFile(file)
+    setIsAnalyzing(true)
+    setAiResponse(null)
+    
+    try {
+      // Convert file to base64 for API call
+      const reader = new FileReader()
+      reader.onload = async (e) => {
+        const base64Image = e.target.result
+        const imageUrl = base64Image // For now, using base64 directly
+        
+        try {
+          const response = await analyzeImage(imageUrl)
+          console.log("RESPONSE FROM API", response);
+          setAiResponse(response)
+          setDetectedBooks(response.books || [])
+        } catch (error) {
+          console.error('Error analyzing image:', error)
+          setAiResponse({ 
+            visibility: "Error analyzing image", 
+            books: [] 
+          })
+          setDetectedBooks([])
+        } finally {
+          setIsAnalyzing(false)
+        }
+      }
+      reader.readAsDataURL(file)
+    } catch (error) {
+      console.error('Error processing image:', error)
+      setAiResponse({ 
+        visibility: "Error processing image", 
+        books: [] 
+      })
+      setIsAnalyzing(false)
+    }
+  }
+
+  const handleGenerateRecommendations = async () => {
+    setIsGeneratingRecommendations(true)
+    setRecommendationsReady(false)
+    
+    try {
+      // Filter out "All Genres" when sending to API
+      const genresForAPI = selectedGenres.filter(genre => genre !== 'All Genres')
+      const newRecommendations = await generateRecommendations(detectedBooks, genresForAPI)
+      saveRecommendations(newRecommendations)
+      setRecommendationsReady(true)
+    } catch (error) {
+      console.error('Error generating recommendations:', error)
+      // Error handling is done in the service
+      setRecommendationsReady(true)
+    } finally {
+      setIsGeneratingRecommendations(false)
+    }
+  }
+
+  return (
+    <>
+      <Navbar />
+      <main>
+        <section style={{ padding: '2rem 0', marginBottom: '2rem' }}>
+          <h2 className="get-started-main-title">
+            Let's get started
+          </h2>
+          
+          {/* Step Progress Indicator */}
+          <div className="step-progress">
+            {[1, 2, 3].map((step) => (
+              <div key={step} className={`step-circle ${step <= currentStep ? 'active' : 'inactive'}`}>
+                {step}
+              </div>
+            ))}
+          </div>
+
+          {/* Step Content */}
+          {currentStep === 1 && (
+            <div className="card step-card step-1">
+              <h3 className="step-title">
+                📸 Step 1: Upload Your Bookshelf Photo
+              </h3>
+              <p className="step-description">
+                Take a clear photo of your bookshelf. Make sure the book spines are visible for best results.
+              </p>
+              
+              <div className="file-upload-container">
+                <input
+                  type="file"
+                  accept="image/*"
+                  onChange={(e) => handleImageUpload(e.target.files[0])}
+                  className="file-input"
+                  id="file-upload"
+                />
+                <label htmlFor="file-upload" className="file-upload-button">
+                  {selectedFile ? 'Retake Photo' : 'Choose Photo'}
+                </label>
+              </div>
+              
+              {selectedFile && (
+                <div className="file-selected">
+                  <p className="file-name">
+                    Selected: {selectedFile.name}
+                  </p>
+                  <div className="image-preview">
+                    <img 
+                      src={URL.createObjectURL(selectedFile)} 
+                      alt="Selected bookshelf" 
+                      className="preview-image"
+                    />
+                  </div>
+                  
+                  {/* AI Analysis Response */}
+                  {isAnalyzing && (
+                    <LoadingSpinner 
+                      message="Analyzing your bookshelf..." 
+                      className="ai-analysis-loading"
+                    />
+                  )}
+                  
+                  {aiResponse && (
+                    <div className="ai-analysis-response">
+                      <h4 className="ai-response-title">AI Analysis:</h4>
+                      <div className={`ai-visibility ${aiResponse.visibility && aiResponse.visibility.includes('get better results') ? 'ai-warning' : 'ai-success'}`}>
+                        <strong>Visibility:</strong> {aiResponse.visibility || 'No visibility information'}
+                      </div>
+                      {aiResponse.books && aiResponse.books.length > 0 && (
+                        <div className="ai-books-detected">
+                          <strong>Books detected:</strong>
+                          <div className="books-display">
+                            {aiResponse.books.slice(0, 3).map((book, index) => (
+                              <span key={index} className="book-tag">{book}</span>
+                            ))}
+                            {aiResponse.books.length > 3 && (
+                              <span className="book-more">and {aiResponse.books.length - 3} more</span>
+                            )}
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  
+                  {aiResponse && !isAnalyzing && (
+                    <button 
+                      onClick={() => setCurrentStep(2)}
+                      className="secondary-button"
+                    >
+                      Continue to Preferences
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="card step-card step-2">
+              <h3 className="step-title">
+                ⚙️ Step 2: Set Your Preferences
+              </h3>
+              <p className="step-description">
+                Tell us about your reading preferences. Select all genres you enjoy:
+              </p>
+              
+              <div className="genre-grid">
+                {['All Genres', 'Fiction', 'Non-fiction', 'Mystery', 'Sci-Fi', 'Romance', 'Biography', 'Fantasy', 'Thriller', 'History', 'Self-Help'].map((genre) => (
+                  <label key={genre} className={`genre-label ${selectedGenres.includes(genre) ? 'selected' : ''}`}>
+                    <input
+                      type="checkbox"
+                      checked={selectedGenres.includes(genre)}
+                      onChange={(e) => {
+                        if (genre === 'All Genres') {
+                          if (e.target.checked) {
+                            // Select all genres except "All Genres"
+                            const allGenres = ['Fiction', 'Non-fiction', 'Mystery', 'Sci-Fi', 'Romance', 'Biography', 'Fantasy', 'Thriller', 'History', 'Self-Help']
+                            setSelectedGenres([...allGenres, 'All Genres'])
+                          } else {
+                            setSelectedGenres([])
+                          }
+                        } else {
+                          if (e.target.checked) {
+                            setSelectedGenres([...selectedGenres, genre])
+                          } else {
+                            // Remove "All Genres" if any individual genre is unchecked
+                            setSelectedGenres(selectedGenres.filter(g => g !== genre && g !== 'All Genres'))
+                          }
+                        }
+                      }}
+                      className="genre-checkbox"
+                    />
+                    {genre}
+                  </label>
+                ))}
+              </div>
+              
+              {selectedGenres.length > 0 && (
+                <div className="selected-genres">
+                  <p className="selected-genres-text">
+                    Selected: {selectedGenres.includes('All Genres') ? 'All Genres' : selectedGenres.join(', ')}
+                  </p>
+                  {isGeneratingRecommendations ? (
+                    <div className="step2-loading">
+                      <div className="loading-spinner"></div>
+                      <span>Generating recommendations...</span>
+                    </div>
+                  ) : (
+                    <button
+                      onClick={async () => {
+                        await handleGenerateRecommendations()
+                        setCurrentStep(3)
+                      }}
+                      className="primary-button step-2"
+                      disabled={isGeneratingRecommendations}
+                    >
+                      Continue to Recommendations
+                    </button>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="card step-card step-3">
+              <h3 className="step-title">
+                🎯 Step 3: Get Your Recommendations
+              </h3>
+              
+              {isGeneratingRecommendations ? (
+                <>
+                  <p className="step-description">
+                    Our AI is analyzing your bookshelf and preferences to find your perfect matches...
+                  </p>
+                  <LoadingSpinner 
+                    message="Generating personalized recommendations..." 
+                    className="ai-analysis-loading"
+                  />
+                </>
+              ) : recommendationsReady ? (
+                <>
+                  <p className="step-description">
+                    Perfect! We've found some amazing books that match your taste.
+                  </p>
+                  <div className="results-box">
+                    <p className="results-text">
+                      📚 Found {detectedBooks.length} books in your collection<br/>
+                      ✅ Generated personalized recommendations<br/>
+                      ⭐ Based on your {selectedGenres.includes('All Genres') ? 'All Genres' : selectedGenres.filter(g => g !== 'All Genres').join(', ')} preferences
+                    </p>
+                  </div>
+                  <Link 
+                    to="/recommendations" 
+                    className="primary-button step-3"
+                  >
+                    View Recommendations
+                  </Link>
+                </>
+              ) : (
+                <>
+                  <p className="step-description">
+                    Something went wrong. Please try again.
+                  </p>
+                  <button
+                    onClick={async () => {
+                      await handleGenerateRecommendations()
+                    }}
+                    className="primary-button step-3"
+                  >
+                    Retry Generating Recommendations
+                  </button>
+                </>
+              )}
+            </div>
+          )}
+
+          {/* Navigation buttons */}
+          <div className="navigation-container">
+            {currentStep > 1 && (
+              <button 
+                onClick={() => setCurrentStep(currentStep - 1)}
+                className="nav-button previous"
+                disabled={isGeneratingRecommendations}
+              >
+                ← Previous
+              </button>
+            )}
+          </div>
+        </section>
+
+      </main>
+      <Footer />
+    </>
+  )
+}
+
+export default GetStarted
