@@ -31,8 +31,8 @@ export async function analyzeImage(imageUrl) {
 }
 
 /** Get refined book recommendations */
-export async function recommendBooks(currentBooks, preferredGenres) {
-  const data = await post("/recommend-books", { currentBooks, preferredGenres });
+export async function recommendBooks(currentBooks, preferredGenres, previouslyChosenBooks = []) {
+  const data = await post("/recommend-books", { currentBooks, preferredGenres, previouslyChosenBooks });
   return data; // Backend now returns array directly
 }
 

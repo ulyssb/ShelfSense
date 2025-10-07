@@ -5,6 +5,9 @@ import Footer from '../components/Footer.jsx'
 import LoadingSpinner from '../components/LoadingSpinner.jsx'
 import { useRecommendations } from '../hooks/useRecommendations.js'
 import { generateRecommendations } from '../services/recommendationService.js'
+import { getPreviouslyChosenBooks, addToPreviouslyChosenBooks } from '../utils/previouslyChosenBooks.js'
+import { getBookCovers } from '../utils/bookCoverService.js'
+import { getDetectedBooks, getSelectedGenres } from '../utils/userData.js'
 import './Recommendations.css'
 
 function Recommendations() {
@@ -14,16 +17,34 @@ function Recommendations() {
   const handleRegenerateRecommendations = async () => {
     setIsRegenerating(true)
     try {
-      // Use AI to generate new recommendations
-      // Note: This would need the original detected books and genres from localStorage or context
-      // For now, we'll use a sample set
-      const sampleBooks = ["The Great Gatsby", "1984", "To Kill a Mockingbird"]
-      const sampleGenres = ["Fiction", "Classic Literature"]
+      // Get the actual detected books and selected genres from localStorage
+      const detectedBooks = getDetectedBooks()
+      const selectedGenres = getSelectedGenres()
+      const previouslyChosenBooks = getPreviouslyChosenBooks()
       
-      console.log("Regenerating recommendations with AI...")
-      const newRecommendations = await generateRecommendations(sampleBooks, sampleGenres)
-      console.log("Generated new recommendations:", newRecommendations)
-      saveRecommendations(newRecommendations)
+      // Filter out "All Genres" when sending to API
+      const genresForAPI = selectedGenres.filter(genre => genre !== 'All Genres')
+      
+      console.log("Regenerating recommendations with stored data:", { detectedBooks, genresForAPI, previouslyChosenBooks })
+      
+      // If no stored data, log error and don't generate recommendations
+      if (detectedBooks.length === 0 || genresForAPI.length === 0) {
+        console.error("No stored data found - cannot regenerate recommendations without detected books and selected genres")
+        return
+      }
+
+      const newRecommendations = await generateRecommendations(detectedBooks, genresForAPI, previouslyChosenBooks)
+      console.log("Generated new recommendations with stored data:", newRecommendations)
+      
+      // Get cover images for the recommendations
+      console.log("Fetching cover images for recommendations...")
+      const recommendationsWithCovers = await getBookCovers(newRecommendations)
+      console.log("Recommendations with covers:", recommendationsWithCovers)
+      
+      // Add new recommendations to previously chosen books
+      addToPreviouslyChosenBooks(recommendationsWithCovers)
+      
+      saveRecommendations(recommendationsWithCovers)
     } catch (error) {
       console.error('Error regenerating recommendations:', error)
       // Error handling is done in the service
@@ -88,7 +109,7 @@ function Recommendations() {
               className="regenerate-button"
               disabled={isRegenerating}
             >
-              🔄 Get New Recommendations
+              Get New Recommendations
             </button>
           )}
         </section>
@@ -128,10 +149,10 @@ function Recommendations() {
                 
                 <div className="book-actions">
                   <button className="add-to-list-button">
-                    📚 Add to Reading List
+                    Add to Reading List
                   </button>
                   <button className="find-book-button">
-                    🔍 Find This Book
+                    Find This Book
                   </button>
                 </div>
               </div>
