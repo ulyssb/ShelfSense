@@ -1,16 +1,72 @@
-# React + Vite
+# ShelfSense
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+AI-powered book recommendations based on your bookshelf.
 
-Currently, two official plugins are available:
+## Project Structure
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+```
+ShelfSense/
+├── backend/          # Node.js/Express API server
+├── frontend/         # React frontend application
+└── README.md
+```
 
-## React Compiler
+## Setup Instructions
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Backend Setup
 
-## Expanding the ESLint configuration
+1. Navigate to the backend directory:
+   ```bash
+   cd backend
+   ```
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file in the backend directory:
+   ```
+   PORT=5000
+   OPENAI_API_KEY=your_openai_api_key_here
+   ```
+
+4. Start the backend server:
+   ```bash
+   npm start
+   ```
+
+The backend will run on `http://localhost:5000`
+
+### Frontend Setup
+
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+
+3. Start the development server:
+   ```bash
+   npm run dev
+   ```
+
+The frontend will run on `http://localhost:3000`
+
+## API Endpoints
+
+- `POST /analyze-image` - Analyze a bookshelf image and extract book titles
+- `POST /recommend-books` - Get book recommendations based on current books and preferences
+
+## Environment Variables
+
+### Backend
+- `PORT` - Server port (default: 5000)
+- `OPENAI_API_KEY` - OpenAI API key for GPT-4 vision and text generation
+
+### Frontend
+- `VITE_API_URL` - Backend API URL (default: http://localhost:5001)
