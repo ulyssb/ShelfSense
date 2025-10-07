@@ -16,6 +16,15 @@ ShelfSense is an AI-powered bookshelf companion that analyzes your bookshelf fro
 
 ---
 
+## How It Works
+
+1. **Upload an Image** — The frontend sends your bookshelf photo to the backend.  
+2. **AI Vision Analysis** — The backend uses OpenAI’s vision models to identify visible book titles.  
+3. **Personalized Suggestions** — The AI recommends 5–7 new books based on your bookshelf and genre preferences.  
+4. **Real Covers & Metadata** — Book data is enriched with real covers and details from Open Library.
+
+---
+
 ## Live Deployment
 
 | Layer | Platform | URL |
@@ -24,15 +33,6 @@ ShelfSense is an AI-powered bookshelf companion that analyzes your bookshelf fro
 | **Backend** | Render | Private API endpoint (accessed by the frontend) |
 
 The frontend (hosted on **Vercel**) communicates securely with the backend (on **Render**) through environment-configured API URLs.
-
----
-
-## How It Works
-
-1. **Upload an Image** — The frontend sends your bookshelf photo to the backend.  
-2. **AI Vision Analysis** — The backend uses OpenAI’s vision models to identify visible book titles.  
-3. **Personalized Suggestions** — The AI recommends 5–7 new books based on your bookshelf and genre preferences.  
-4. **Real Covers & Metadata** — Book data is enriched with real covers and details from Open Library.
 
 ---
 
