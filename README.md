@@ -25,6 +25,15 @@ ShelfSense is an AI-powered bookshelf companion that analyzes your bookshelf fro
 
 ---
 
+## Future Improvements
+
+- **User Authentication & Saved Reading Lists** — Allow users to create accounts, log in, and maintain personalized reading lists stored securely in a database.
+- **Multi-AI Provider Support** — Integrate alternative AI models such as Anthropic’s Claude or Google’s Gemini for flexible, cost-efficient AI processing.
+- **Enhanced Bookshelf Text Recognition** — Improve title extraction from bookshelf images using dedicated OCR (Optical Character Recognition) tools for better accuracy.
+- **Goodreads Integration & Preference Import** — Enable users to connect their Goodreads account or import favorite books directly, allowing them to skip the bookshelf analysis step.
+
+---
+
 ## Live Deployment
 
 | Layer | Platform | URL |
@@ -46,15 +55,6 @@ The frontend (hosted on **Vercel**) communicates securely with the backend (on *
 | **Data Source** | Open Library API |
 | **Styling** | Tailwind CSS |
 | **Environment** | dotenv + environment variables (Vercel & Render dashboards) |
-
----
-
-## Future Improvements
-
-- **User Authentication & Saved Reading Lists** — Allow users to create accounts, log in, and maintain personalized reading lists stored securely in a database.
-- **Multi-AI Provider Support** — Integrate alternative AI models such as Anthropic’s Claude or Google’s Gemini for flexible, cost-efficient AI processing.
-- **Enhanced Bookshelf Text Recognition** — Improve title extraction from bookshelf images using dedicated OCR (Optical Character Recognition) tools for better accuracy.
-- **Goodreads Integration & Preference Import** — Enable users to connect their Goodreads account or import favorite books directly, allowing them to skip the bookshelf analysis step.
 
 ---
 
