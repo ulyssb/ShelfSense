@@ -94,6 +94,56 @@ class AIService {
   // ---------- Private methods ----------
 
   /** OpenAI: Analyze bookshelf image */
+  async _analyzeWithOpenAI(imageUrl) {
+    const response = await this.client.chat.completions.create({
+      model: "gpt-4o",
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "Analyze this bookshelf image and identify the books visible on the shelves. Return a JSON object with 'visibility' (a string describing image quality) and 'books' (an array of book titles you can identify)."
+            },
+            {
+              type: "image_url",
+              image_url: {
+                url: imageUrl
+              }
+            }
+          ]
+        }
+      ],
+      response_format: { type: "json_object" }
+    });
+
+    const raw = response.choices[0]?.message?.content;
+    console.log("📸 Raw AI response:", raw);
+
+    let parsed;
+    try {
+      parsed = JSON.parse(raw);
+    } catch (e) {
+      console.error("Failed to parse AI response:", raw);
+      throw new Error("Invalid JSON returned by AI");
+    }
+
+    return parsed;
+  }
+
+  /** Claude: Analyze bookshelf image */
+  async _analyzeWithClaude(imageUrl) {
+    // Placeholder for Claude implementation
+    throw new Error("Claude image analysis not implemented yet");
+  }
+
+  /** Gemini: Analyze bookshelf image */
+  async _analyzeWithGemini(imageUrl) {
+    // Placeholder for Gemini implementation
+    throw new Error("Gemini image analysis not implemented yet");
+  }
+
+  /** OpenAI: Recommend books */
   async _recommendWithOpenAI(currentBooks, preferredGenres) {
     const response = await this.client.chat.completions.create({
       model: "gpt-4o", // full model for better reasoning & creativity

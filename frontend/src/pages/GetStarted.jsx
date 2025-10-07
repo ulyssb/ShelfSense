@@ -6,6 +6,9 @@ import LoadingSpinner from '../components/LoadingSpinner.jsx'
 import { useRecommendations } from '../hooks/useRecommendations.js'
 import { analyzeImage } from '../api.js'
 import { generateRecommendations } from '../services/recommendationService.js'
+import { getPreviouslyChosenBooks, addToPreviouslyChosenBooks } from '../utils/previouslyChosenBooks.js'
+import { getBookCovers } from '../utils/bookCoverService.js'
+import { saveDetectedBooks, saveSelectedGenres } from '../utils/userData.js'
 import './GetStarted.css'
 
 function GetStarted() {
@@ -33,21 +36,24 @@ function GetStarted() {
         const base64Image = e.target.result
         const imageUrl = base64Image // For now, using base64 directly
         
-        try {
-          const response = await analyzeImage(imageUrl)
-          console.log("RESPONSE FROM API", response);
-          setAiResponse(response)
-          setDetectedBooks(response.books || [])
-        } catch (error) {
-          console.error('Error analyzing image:', error)
-          setAiResponse({ 
-            visibility: "Error analyzing image", 
-            books: [] 
-          })
-          setDetectedBooks([])
-        } finally {
-          setIsAnalyzing(false)
-        }
+            try {
+              const response = await analyzeImage(imageUrl)
+              console.log("RESPONSE FROM API", response);
+              setAiResponse(response)
+              const books = response.books || []
+              setDetectedBooks(books)
+              saveDetectedBooks(books)
+            } catch (error) {
+              console.error('Error analyzing image:', error)
+              setAiResponse({ 
+                visibility: "Error analyzing image", 
+                books: [] 
+              })
+              setDetectedBooks([])
+              saveDetectedBooks([])
+            } finally {
+              setIsAnalyzing(false)
+            }
       }
       reader.readAsDataURL(file)
     } catch (error) {
@@ -67,8 +73,19 @@ function GetStarted() {
     try {
       // Filter out "All Genres" when sending to API
       const genresForAPI = selectedGenres.filter(genre => genre !== 'All Genres')
-      const newRecommendations = await generateRecommendations(detectedBooks, genresForAPI)
-      saveRecommendations(newRecommendations)
+      const previouslyChosenBooks = getPreviouslyChosenBooks()
+      
+      const newRecommendations = await generateRecommendations(detectedBooks, genresForAPI, previouslyChosenBooks)
+      
+      // Get cover images for the recommendations
+      console.log("Fetching cover images for recommendations...")
+      const recommendationsWithCovers = await getBookCovers(newRecommendations)
+      console.log("Recommendations with covers:", recommendationsWithCovers)
+      
+      // Add new recommendations to previously chosen books
+      addToPreviouslyChosenBooks(recommendationsWithCovers)
+      
+      saveRecommendations(recommendationsWithCovers)
       setRecommendationsReady(true)
     } catch (error) {
       console.error('Error generating recommendations:', error)
@@ -100,9 +117,9 @@ function GetStarted() {
           {/* Step Content */}
           {currentStep === 1 && (
             <div className="card step-card step-1">
-              <h3 className="step-title">
-                📸 Step 1: Upload Your Bookshelf Photo
-              </h3>
+                  <h3 className="step-title">
+                    Step 1: Upload Your Bookshelf Photo
+                  </h3>
               <p className="step-description">
                 Take a clear photo of your bookshelf. Make sure the book spines are visible for best results.
               </p>
@@ -178,9 +195,9 @@ function GetStarted() {
 
           {currentStep === 2 && (
             <div className="card step-card step-2">
-              <h3 className="step-title">
-                ⚙️ Step 2: Set Your Preferences
-              </h3>
+                  <h3 className="step-title">
+                    Step 2: Set Your Preferences
+                  </h3>
               <p className="step-description">
                 Tell us about your reading preferences. Select all genres you enjoy:
               </p>
@@ -192,22 +209,25 @@ function GetStarted() {
                       type="checkbox"
                       checked={selectedGenres.includes(genre)}
                       onChange={(e) => {
+                        let newGenres
                         if (genre === 'All Genres') {
                           if (e.target.checked) {
                             // Select all genres except "All Genres"
                             const allGenres = ['Fiction', 'Non-fiction', 'Mystery', 'Sci-Fi', 'Romance', 'Biography', 'Fantasy', 'Thriller', 'History', 'Self-Help']
-                            setSelectedGenres([...allGenres, 'All Genres'])
+                            newGenres = [...allGenres, 'All Genres']
                           } else {
-                            setSelectedGenres([])
+                            newGenres = []
                           }
                         } else {
                           if (e.target.checked) {
-                            setSelectedGenres([...selectedGenres, genre])
+                            newGenres = [...selectedGenres, genre]
                           } else {
                             // Remove "All Genres" if any individual genre is unchecked
-                            setSelectedGenres(selectedGenres.filter(g => g !== genre && g !== 'All Genres'))
+                            newGenres = selectedGenres.filter(g => g !== genre && g !== 'All Genres')
                           }
                         }
+                        setSelectedGenres(newGenres)
+                        saveSelectedGenres(newGenres)
                       }}
                       className="genre-checkbox"
                     />
@@ -246,7 +266,7 @@ function GetStarted() {
           {currentStep === 3 && (
             <div className="card step-card step-3">
               <h3 className="step-title">
-                🎯 Step 3: Get Your Recommendations
+                Step 3: Get Your Recommendations
               </h3>
               
               {isGeneratingRecommendations ? (
@@ -266,9 +286,7 @@ function GetStarted() {
                   </p>
                   <div className="results-box">
                     <p className="results-text">
-                      📚 Found {detectedBooks.length} books in your collection<br/>
-                      ✅ Generated personalized recommendations<br/>
-                      ⭐ Based on your {selectedGenres.includes('All Genres') ? 'All Genres' : selectedGenres.filter(g => g !== 'All Genres').join(', ')} preferences
+                      Your personalized recommendations are ready!
                     </p>
                   </div>
                   <Link 
