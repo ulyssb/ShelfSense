@@ -42,12 +42,13 @@ app.get("/", (req, res) => {
 
 // ---------- SERVER START ----------
 const PORT = process.env.PORT || 5001;
+const HOST = process.env.BACKEND_HOST || '0.0.0.0';
 
-const server = app.listen(PORT, () => {
-  console.log(`Backend running on port ${PORT}`)
+const server = app.listen(PORT, HOST, () => {
+  console.log(`Backend running on ${HOST}:${PORT}`)
   console.log(`API endpoints:`)
-  console.log(`   POST http://localhost:${PORT}/analyze-image`)
-  console.log(`   POST http://localhost:${PORT}/recommend-books`)
+  console.log(`   POST http://${HOST}:${PORT}/analyze-image`)
+  console.log(`   POST http://${HOST}:${PORT}/recommend-books`)
   console.log(`Environment: ${process.env.NODE_ENV || 'development'}`)
 })
 
