@@ -1,72 +1,35 @@
-# ShelfSense
+# 📚 ShelfSense
 
-AI-powered book recommendations based on your bookshelf.
+ShelfSense is an AI-powered bookshelf companion that analyzes your bookshelf from an image and recommends new books you’ll love — combining computer vision with intelligent recommendations.
 
-## Project Structure
+---
 
-```
-ShelfSense/
-├── backend/          # Node.js/Express API server
-├── frontend/         # React frontend application
-└── README.md
-```
+## ✨ Features
 
-## Setup Instructions
+-  **Bookshelf Analyzer** — Upload a photo of your bookshelf, and the AI identifies book titles it can read.
+- **Smart Book Recommendations** — Get personalized book suggestions based on your current reads and favorite genres.
+- **Real Book Covers** — Uses the Open Library API to attach real cover images to recommendations.
+- **Flexible AI Backend** — Modular backend supporting OpenAI (with future support for Claude and Gemini).
+- 💬 **Clean JSON API** — Well-defined backend routes for both image analysis and recommendation generation.
 
-### Backend Setup
+---
 
-1. Navigate to the backend directory:
-   ```bash
-   cd backend
-   ```
+## How It Works
 
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+1. **Upload an Image** — The frontend sends your bookshelf photo to the backend.
+2. **AI Vision Analysis** — The backend uses GPT-4o’s vision capabilities to identify visible book titles.
+3. **Personalized Suggestions** — The app recommends 5–7 new books based on your bookshelf and genre preferences.
+4. **Real Covers & Metadata** — Open Library data enriches the results with actual book covers and descriptions.
 
-3. Create a `.env` file in the backend directory:
-   ```
-   PORT=5000
-   OPENAI_API_KEY=your_openai_api_key_here
-   ```
+---
 
-4. Start the backend server:
-   ```bash
-   npm start
-   ```
+## Tech Stack
 
-The backend will run on `http://localhost:5000`
+| Layer | Technology |
+|-------|-------------|
+| **Frontend** | React + Vite |
+| **Backend** | Node.js + Express |
+| **AI Model** | OpenAI GPT-4o / GPT-4o-mini |
+| **Book Data** | Open Library API |
+| **Environment** | dotenv for key management |
 
-### Frontend Setup
-
-1. Navigate to the frontend directory:
-   ```bash
-   cd frontend
-   ```
-
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
-
-3. Start the development server:
-   ```bash
-   npm run dev
-   ```
-
-The frontend will run on `http://localhost:3000`
-
-## API Endpoints
-
-- `POST /analyze-image` - Analyze a bookshelf image and extract book titles
-- `POST /recommend-books` - Get book recommendations based on current books and preferences
-
-## Environment Variables
-
-### Backend
-- `PORT` - Server port (default: 5000)
-- `OPENAI_API_KEY` - OpenAI API key for GPT-4 vision and text generation
-
-### Frontend
-- `VITE_API_URL` - Backend API URL (default: http://localhost:5001)
