@@ -24,10 +24,29 @@ async function post(endpoint, body) {
 }
 
 /** Analyze an image and get books */
-export async function analyzeImage(imageUrl) {
-  console.log("ABOUT TO POST DATA to backend");
-  const data = await post("/analyze-image", { imageUrl });
-  return data; // Return full response, not just books
+export async function analyzeImage(imageFile) {
+  console.log("ABOUT TO POST IMAGE FILE to backend");
+  
+  const formData = new FormData();
+  formData.append('image', imageFile);
+  
+  try {
+    const response = await fetch(`${API_URL}/analyze-image`, {
+      method: 'POST',
+      body: formData
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(`Server error: ${response.status} ${JSON.stringify(errorData)}`);
+    }
+    
+    const data = await response.json();
+    return data; // Return full response, not just books
+  } catch (error) {
+    console.error("API request failed:", error);
+    throw error;
+  }
 }
 
 /** Get refined book recommendations */
