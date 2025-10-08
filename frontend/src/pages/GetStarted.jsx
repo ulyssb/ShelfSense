@@ -26,42 +26,37 @@ function GetStarted() {
   const handleImageUpload = async (file) => {
     if (!file) return
     
-    setSelectedFile(file)
     setIsAnalyzing(true)
     setAiResponse(null)
     
     try {
-      // Compress the image first
+      // Compress the image first (this also converts HEIC to JPEG)
       console.log('Compressing image...')
       const compressedFile = await compressImage(file)
       console.log(`Original size: ${file.size} bytes, Compressed size: ${compressedFile.size} bytes`)
       
-      // Convert compressed file to base64 for API call
-      const reader = new FileReader()
-      reader.onload = async (e) => {
-        const base64Image = e.target.result
-        const imageUrl = base64Image // Using base64 directly
-        
-        try {
-          const response = await analyzeImage(imageUrl)
-          console.log("RESPONSE FROM API", response);
-          setAiResponse(response)
-          const books = response.books || []
-          setDetectedBooks(books)
-          saveDetectedBooks(books)
-        } catch (error) {
-          console.error('Error analyzing image:', error)
-          setAiResponse({ 
-            visibility: "Error analyzing image", 
-            books: [] 
-          })
-          setDetectedBooks([])
-          saveDetectedBooks([])
-        } finally {
-          setIsAnalyzing(false)
-        }
+      // Set the compressed file for preview (this will show HEIC files as JPEG)
+      setSelectedFile(compressedFile)
+      
+      // Send compressed file directly to API (no base64 conversion needed)
+      try {
+        const response = await analyzeImage(compressedFile)
+        console.log("RESPONSE FROM API", response);
+        setAiResponse(response)
+        const books = response.books || []
+        setDetectedBooks(books)
+        saveDetectedBooks(books)
+      } catch (error) {
+        console.error('Error analyzing image:', error)
+        setAiResponse({ 
+          visibility: "Error analyzing image", 
+          books: [] 
+        })
+        setDetectedBooks([])
+        saveDetectedBooks([])
+      } finally {
+        setIsAnalyzing(false)
       }
-      reader.readAsDataURL(compressedFile)
     } catch (error) {
       console.error('Error processing image:', error)
       setAiResponse({ 

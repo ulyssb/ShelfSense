@@ -1,6 +1,7 @@
 import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
+import multer from "multer";
 import { aiService } from "./services/aiService.js";
 
 dotenv.config();
@@ -10,17 +11,43 @@ app.use(cors());
 
 const BODY_SIZE_LIMIT_MB = process.env.BODY_SIZE_LIMIT_MB || 5; // fallback
 
+// Configure multer for memory storage (no disk storage needed)
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: {
+    fileSize: BODY_SIZE_LIMIT_MB * 1024 * 1024, // Convert MB to bytes
+  },
+  fileFilter: (req, file, cb) => {
+    // Accept common image formats including HEIC
+    const allowedTypes = /jpeg|jpg|png|gif|webp|heic|heif/;
+    const extname = allowedTypes.test(file.originalname.toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    
+    if (mimetype || extname) {
+      return cb(null, true);
+    } else {
+      cb(new Error('Only image files are allowed!'));
+    }
+  }
+});
+
 app.use(express.json({ limit: `${BODY_SIZE_LIMIT_MB}mb` }));
 app.use(express.urlencoded({ limit: `${BODY_SIZE_LIMIT_MB}mb`, extended: true }));
 // ---------- ROUTE 1 ----------
 // Analyze an image and suggest books
-app.post("/analyze-image", async (req, res) => {
+app.post("/analyze-image", upload.single('image'), async (req, res) => {
   try {
-    const { imageUrl } = req.body;
-    const result = await aiService.analyzeBookshelfImage(imageUrl);
+    if (!req.file) {
+      return res.status(400).json({ error: 'No image file provided' });
+    }
+
+    // Convert buffer to base64 data URL
+    const base64Image = `data:${req.file.mimetype};base64,${req.file.buffer.toString('base64')}`;
+    
+    const result = await aiService.analyzeBookshelfImage(base64Image);
     res.json(result);
   } catch (err) {
-    console.error("Error:", err);
+    console.error("Error in analyze-image route:", err);
     res.status(500).json({ error: err.message });
   }
 });
