@@ -7,8 +7,11 @@ dotenv.config();
 
 const app = express();
 app.use(cors());
-app.use(express.json());
 
+const BODY_SIZE_LIMIT_MB = process.env.BODY_SIZE_LIMIT_MB || 5; // fallback
+
+app.use(express.json({ limit: `${BODY_SIZE_LIMIT_MB}mb` }));
+app.use(express.urlencoded({ limit: `${BODY_SIZE_LIMIT_MB}mb`, extended: true }));
 // ---------- ROUTE 1 ----------
 // Analyze an image and suggest books
 app.post("/analyze-image", async (req, res) => {
