@@ -14,7 +14,7 @@ class AIService {
     });
 
     if (!process.env.OPENAI_API_KEY) {
-      console.warn("⚠️ No OPENAI_API_KEY found. Check your .env file.");
+      console.warn("⚠️ No OPENAI_API_KEY found.");
     }
   }
 
@@ -103,7 +103,10 @@ class AIService {
           content: [
             {
               type: "text",
-              text: "Analyze this bookshelf image and identify the books visible on the shelves. Return a JSON object with 'visibility' (a string describing image quality) and 'books' (an array of book titles you can identify)."
+              text: `Analyze this bookshelf image and identify the books visible on the shelves.
+              Return a JSON object with 'visibility' (a string describing image quality) and 'books'
+              (an array of book titles you can identify).
+              In visibility, write one word to say how good/bad the image is, and if it's bad explain why you can't identify books (e.g I don't find books in the image, too much sunlight, too dark)`
             },
             {
               type: "image_url",
