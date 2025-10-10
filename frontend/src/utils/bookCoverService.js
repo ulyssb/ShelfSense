@@ -29,12 +29,11 @@ export async function getBookCover(title, author) {
 
     const mostRecentDoc = sortedDocs[0];
     const coverId = mostRecentDoc?.cover_i;
-    
+
     return coverId
       ? `https://covers.openlibrary.org/b/id/${coverId}-L.jpg`
       : null;
   } catch (error) {
-    console.error('Error fetching book cover:', error);
     return null;
   }
 }
@@ -55,10 +54,9 @@ export async function getBookCovers(books) {
         };
       })
     );
-    
+
     return booksWithCovers;
   } catch (error) {
-    console.error('Error fetching book covers:', error);
     // Return books with null coverImage if there's an error
     return books.map(book => ({
       ...book,

@@ -7,7 +7,7 @@ export function useRecommendations() {
 
   const loadRecommendations = () => {
     const savedRecommendations = localStorage.getItem('shelfSenseRecommendations')
-    
+
     if (savedRecommendations) {
       const parsedRecommendations = JSON.parse(savedRecommendations)
       setRecommendations(parsedRecommendations)

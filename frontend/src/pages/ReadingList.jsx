@@ -45,7 +45,7 @@ function ReadingList() {
     return (
       <>
         <Navbar />
-        <Toast 
+        <Toast
           isVisible={toast.isVisible}
           message={toast.message}
           type={toast.type}
@@ -70,7 +70,7 @@ function ReadingList() {
   return (
     <>
       <Navbar />
-      <Toast 
+      <Toast
         isVisible={toast.isVisible}
         message={toast.message}
         type={toast.type}
@@ -82,7 +82,7 @@ function ReadingList() {
           <p className="reading-list-subtitle">
             {readingList.length} book{readingList.length !== 1 ? 's' : ''} saved for later
           </p>
-          <button 
+          <button
             onClick={handleClearList}
             className="clear-list-button"
           >
@@ -94,8 +94,8 @@ function ReadingList() {
           {readingList.map((book, index) => (
             <div key={`${book.title}-${index}`} className="book-card">
               <div className="book-cover">
-                <img 
-                  src={book.coverImage} 
+                <img
+                  src={book.coverImage}
                   alt={`${book.title} cover`}
                   className="book-cover-image"
                   onError={(e) => {
@@ -107,25 +107,25 @@ function ReadingList() {
                   <span className="cover-emoji">📚</span>
                 </div>
               </div>
-              
+
               <div className="book-info">
                 <h3 className="book-title">{book.title}</h3>
                 <p className="book-author">by {book.author}</p>
-                <span className="book-genre">{book.genre}</span>
-                <div className="book-rating">
-                  ⭐ {book.rating}
+                <div className="book-meta">
+                  <span className="book-genre">{book.genre}</span>
+                  <span className="book-rating">⭐ {book.rating}</span>
                 </div>
-                
+
                 <p className="book-description">{book.description}</p>
-                
+
                 <div className="book-actions">
-                  <button 
+                  <button
                     className="remove-button"
                     onClick={() => handleRemoveFromList(book)}
                   >
                     Remove from List
                   </button>
-                  <button 
+                  <button
                     className="find-book-button"
                     onClick={() => handleFindBook(book)}
                   >
