@@ -29,7 +29,6 @@ export async function compressImage(
     file.name.toLowerCase().endsWith(".heic") ||
     file.name.toLowerCase().endsWith(".heif")
   ) {
-    console.log("Detected HEIC/HEIF image — converting to JPEG...");
     try {
       const convertedBlob = await heic2any({
         blob: file,
@@ -43,9 +42,7 @@ export async function compressImage(
         { type: "image/jpeg" }
       );
 
-      console.log(`HEIC conversion complete. New size: ${imageFile.size} bytes`);
     } catch (err) {
-      console.error("HEIC conversion failed:", err);
       throw new Error("Failed to convert HEIC image");
     }
   }

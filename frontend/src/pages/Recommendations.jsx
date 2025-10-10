@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import Navbar from '../components/Navbar.jsx'
 import Footer from '../components/Footer.jsx'
@@ -6,6 +6,7 @@ import LoadingSpinner from '../components/LoadingSpinner.jsx'
 import Toast from '../components/Toast.jsx'
 import { useRecommendations } from '../hooks/useRecommendations.js'
 import { useReadingList } from '../hooks/useReadingList.js'
+import { useIsMounted } from '../hooks/useIsMounted.js'
 import { generateRecommendations } from '../services/recommendationService.js'
 import { getPreviouslyChosenBooks, addToPreviouslyChosenBooks } from '../utils/previouslyChosenBooks.js'
 import { getBookCovers } from '../utils/bookCoverService.js'
@@ -17,43 +18,101 @@ function Recommendations() {
   const { addToReadingList, isBookAdded } = useReadingList()
   const [isRegenerating, setIsRegenerating] = useState(false)
   const [toast, setToast] = useState({ isVisible: false, message: '', type: 'success' })
+  const isMounted = useIsMounted()
+
+  // Ref to store abort controller for cleanup
+  const regenerationController = useRef(null)
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (regenerationController.current) {
+        regenerationController.current.abort()
+      }
+    }
+  }, [])
 
   const handleRegenerateRecommendations = async () => {
+    // Cancel any existing regeneration
+    if (regenerationController.current) {
+      regenerationController.current.abort()
+    }
+
+    // Only proceed if component is still mounted
+    if (!isMounted()) return
+
     setIsRegenerating(true)
+
+    // Create new AbortController for this request
+    regenerationController.current = new AbortController()
+
     try {
       // Get the actual detected books and selected genres from localStorage
       const detectedBooks = getDetectedBooks()
       const selectedGenres = getSelectedGenres()
       const previouslyChosenBooks = getPreviouslyChosenBooks()
-      
+
       // Filter out "All Genres" when sending to API
       const genresForAPI = selectedGenres.filter(genre => genre !== 'All Genres')
-      
-      console.log("Regenerating recommendations with stored data:", { detectedBooks, genresForAPI, previouslyChosenBooks })
-      
-      // If no stored data, log error and don't generate recommendations
+
+
+      // If no detected books or genres, but we have existing recommendations, use those as a base
       if (detectedBooks.length === 0 || genresForAPI.length === 0) {
-        console.error("No stored data found - cannot regenerate recommendations without detected books and selected genres")
+        if (recommendations.length > 0) {
+          // Use existing recommendations as detected books for regeneration
+          const existingBooks = recommendations.map(rec => rec.title)
+          const existingGenres = [...new Set(recommendations.map(rec => rec.genre))].filter(Boolean)
+
+          const newRecommendations = await generateRecommendations(existingBooks, existingGenres, previouslyChosenBooks, regenerationController.current.signal)
+
+          // Only continue if component is still mounted
+          if (!isMounted()) return
+
+          // Get cover images for the recommendations
+          const recommendationsWithCovers = await getBookCovers(newRecommendations)
+
+          // Only update state if component is still mounted
+          if (isMounted()) {
+            // Add new recommendations to previously chosen books
+            addToPreviouslyChosenBooks(recommendationsWithCovers)
+
+            saveRecommendations(recommendationsWithCovers)
+          }
+        } else {
+          setToast({
+            isVisible: true,
+            message: "Please analyze a bookshelf image first to generate recommendations",
+            type: 'error'
+          })
+          return
+        }
+      } else {
+        // Normal flow with detected books and genres
+        const newRecommendations = await generateRecommendations(detectedBooks, genresForAPI, previouslyChosenBooks, regenerationController.current.signal)
+
+        // Only continue if component is still mounted
+        if (!isMounted()) return
+
+        // Get cover images for the recommendations
+        const recommendationsWithCovers = await getBookCovers(newRecommendations)
+
+        // Only update state if component is still mounted
+        if (isMounted()) {
+          // Add new recommendations to previously chosen books
+          addToPreviouslyChosenBooks(recommendationsWithCovers)
+
+          saveRecommendations(recommendationsWithCovers)
+        }
+      }
+    } catch (error) {
+      if (error.message === "Request was cancelled") {
         return
       }
-
-      const newRecommendations = await generateRecommendations(detectedBooks, genresForAPI, previouslyChosenBooks)
-      console.log("Generated new recommendations with stored data:", newRecommendations)
-      
-      // Get cover images for the recommendations
-      console.log("Fetching cover images for recommendations...")
-      const recommendationsWithCovers = await getBookCovers(newRecommendations)
-      console.log("Recommendations with covers:", recommendationsWithCovers)
-      
-      // Add new recommendations to previously chosen books
-      addToPreviouslyChosenBooks(recommendationsWithCovers)
-      
-      saveRecommendations(recommendationsWithCovers)
-    } catch (error) {
-      console.error('Error regenerating recommendations:', error)
       // Error handling is done in the service
     } finally {
-      setIsRegenerating(false)
+      if (isMounted()) {
+        setIsRegenerating(false)
+      }
     }
   }
 
@@ -114,7 +173,7 @@ function Recommendations() {
   return (
     <>
       <Navbar />
-      <Toast 
+      <Toast
         isVisible={toast.isVisible}
         message={toast.message}
         type={toast.type}
@@ -134,7 +193,7 @@ function Recommendations() {
               <span>Generating new recommendations...</span>
             </div>
           ) : (
-            <button 
+            <button
               onClick={handleRegenerateRecommendations}
               className="regenerate-button"
               disabled={isRegenerating}
@@ -148,8 +207,8 @@ function Recommendations() {
           {recommendations.map((book) => (
             <div key={book.id} className="book-card">
               <div className="book-cover">
-                <img 
-                  src={book.coverImage} 
+                <img
+                  src={book.coverImage}
                   alt={`${book.title} cover`}
                   className="book-cover-image"
                   onError={(e) => {
@@ -160,32 +219,32 @@ function Recommendations() {
                 <div className="book-cover-fallback" style={{ display: 'none' }}>
                   <span className="cover-emoji">📚</span>
                 </div>
-                <div className="book-rating">
-                  ⭐ {book.rating}
-                </div>
               </div>
-              
+
               <div className="book-info">
                 <h3 className="book-title">{book.title}</h3>
                 <p className="book-author">by {book.author}</p>
-                <span className="book-genre">{book.genre}</span>
-                
+                <div className="book-meta">
+                  <span className="book-genre">{book.genre}</span>
+                  <span className="book-rating">⭐ {book.rating}</span>
+                </div>
+
                 <p className="book-description">{book.description}</p>
-                
+
                 <div className="recommendation-reason">
                   <strong>Why we recommend this:</strong>
                   <p>{book.reason}</p>
                 </div>
-                
+
                 <div className="book-actions">
-                  <button 
+                  <button
                     className={`add-to-list-button ${isBookAdded(book.title) ? 'disabled' : ''}`}
                     onClick={() => handleAddToReadingList(book)}
                     disabled={isBookAdded(book.title)}
                   >
                     {isBookAdded(book.title) ? 'Added to List' : 'Add to Reading List'}
                   </button>
-                  <button 
+                  <button
                     className="find-book-button"
                     onClick={() => handleFindBook(book)}
                   >

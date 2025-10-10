@@ -4,6 +4,7 @@
 
 const DETECTED_BOOKS_KEY = 'shelfSense_detectedBooks'
 const SELECTED_GENRES_KEY = 'shelfSense_selectedGenres'
+const STEP1_DATA_KEY = 'shelfSense_step1Data'
 
 /**
  * Save detected books to localStorage
@@ -12,9 +13,7 @@ const SELECTED_GENRES_KEY = 'shelfSense_selectedGenres'
 export function saveDetectedBooks(books) {
   try {
     localStorage.setItem(DETECTED_BOOKS_KEY, JSON.stringify(books))
-    console.log('Saved detected books:', books)
   } catch (error) {
-    console.error('Error saving detected books:', error)
   }
 }
 
@@ -27,7 +26,6 @@ export function getDetectedBooks() {
     const stored = localStorage.getItem(DETECTED_BOOKS_KEY)
     return stored ? JSON.parse(stored) : []
   } catch (error) {
-    console.error('Error reading detected books from localStorage:', error)
     return []
   }
 }
@@ -39,9 +37,7 @@ export function getDetectedBooks() {
 export function saveSelectedGenres(genres) {
   try {
     localStorage.setItem(SELECTED_GENRES_KEY, JSON.stringify(genres))
-    console.log('Saved selected genres:', genres)
   } catch (error) {
-    console.error('Error saving selected genres:', error)
   }
 }
 
@@ -54,8 +50,41 @@ export function getSelectedGenres() {
     const stored = localStorage.getItem(SELECTED_GENRES_KEY)
     return stored ? JSON.parse(stored) : []
   } catch (error) {
-    console.error('Error reading selected genres from localStorage:', error)
     return []
+  }
+}
+
+/**
+ * Save step 1 data to localStorage
+ * @param {Object} data - Step 1 data including selectedFile, aiResponse, etc.
+ */
+export function saveStep1Data(data) {
+  try {
+    localStorage.setItem(STEP1_DATA_KEY, JSON.stringify(data))
+  } catch (error) {
+  }
+}
+
+/**
+ * Get step 1 data from localStorage
+ * @returns {Object|null} Step 1 data or null if not found
+ */
+export function getStep1Data() {
+  try {
+    const stored = localStorage.getItem(STEP1_DATA_KEY)
+    return stored ? JSON.parse(stored) : null
+  } catch (error) {
+    return null
+  }
+}
+
+/**
+ * Clear step 1 data from localStorage
+ */
+export function clearStep1Data() {
+  try {
+    localStorage.removeItem(STEP1_DATA_KEY)
+  } catch (error) {
   }
 }
 
@@ -66,8 +95,7 @@ export function clearUserData() {
   try {
     localStorage.removeItem(DETECTED_BOOKS_KEY)
     localStorage.removeItem(SELECTED_GENRES_KEY)
-    console.log('Cleared user data')
+    localStorage.removeItem(STEP1_DATA_KEY)
   } catch (error) {
-    console.error('Error clearing user data:', error)
   }
 }

@@ -14,7 +14,6 @@ class AIService {
     });
 
     if (!process.env.OPENAI_API_KEY) {
-      console.warn("⚠️ No OPENAI_API_KEY found.");
     }
   }
 
@@ -25,7 +24,6 @@ class AIService {
    */
   async analyzeBookshelfImage(imageUrl) {
     try {
-      console.log(`[AI Service] Analyzing bookshelf image with ${this.provider}...`);
 
       switch (this.provider.toLowerCase()) {
         case "openai":
@@ -38,7 +36,6 @@ class AIService {
           throw new Error(`Unsupported AI provider: ${this.provider}`);
       }
     } catch (error) {
-      console.error("[AI Service] Error analyzing image:", error);
       throw error;
     }
   }
@@ -52,7 +49,6 @@ class AIService {
    */
   async getBookRecommendations(currentBooks, preferredGenres, previouslyChosenBooks = []) {
     try {
-      console.log(`[AI Service] Getting book recommendations with ${this.provider}...`);
 
       switch (this.provider.toLowerCase()) {
         case "openai":
@@ -65,7 +61,6 @@ class AIService {
           throw new Error(`Unsupported AI provider: ${this.provider}`);
       }
     } catch (error) {
-      console.error("[AI Service] Error getting recommendations:", error);
       throw error;
     }
   }
@@ -83,7 +78,6 @@ class AIService {
     }
 
     this.provider = normalized;
-    console.log(`[AI Service] Switched to ${normalized}`);
   }
 
   /** Get current provider */
@@ -121,13 +115,11 @@ class AIService {
     });
 
     const raw = response.choices[0]?.message?.content;
-    console.log("📸 Raw AI response:", raw);
 
     let parsed;
     try {
       parsed = JSON.parse(raw);
     } catch (e) {
-      console.error("Failed to parse AI response:", raw);
       throw new Error("Invalid JSON returned by AI");
     }
 
@@ -200,13 +192,10 @@ class AIService {
   
 
     const raw = response.choices[0]?.message?.content;
-    console.log(" GPT response:", raw);
 
     try {
       return JSON.parse(raw);
     } catch (err) {
-      console.error("❌ Failed to parse AI JSON:", err);
-      console.log("Raw content:", raw);
       throw new Error("Invalid JSON returned by AI");
     }
   }
@@ -259,24 +248,19 @@ class AIService {
     });
   
     const raw = response.choices[0]?.message?.content;
-    console.log("📚 Raw AI response:", raw);
   
     let parsed;
     try {
       parsed = JSON.parse(raw);
     } catch (err) {
-      console.error("❌ Could not parse AI response:", err);
-      console.log("Raw response:", raw);
       throw new Error("Invalid JSON returned by model");
     }
   
     // ✅ Always expect recommendations array
     if (Array.isArray(parsed.recommendations)) {
-      console.log("Parsed recommendations:", parsed.recommendations);
       return parsed.recommendations;
     }
   
-    console.warn("⚠️ Unexpected response shape:", parsed);
     return [];
   }
 

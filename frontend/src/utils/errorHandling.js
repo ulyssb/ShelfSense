@@ -9,11 +9,8 @@
  * @param {Object} additionalData - Additional data to log
  */
 export function logError(error, context, additionalData = {}) {
-  console.error(`[${context}] Error:`, error.message)
   if (Object.keys(additionalData).length > 0) {
-    console.error(`[${context}] Additional data:`, additionalData)
   }
-  console.error(`[${context}] Stack trace:`, error.stack)
 }
 
 /**
@@ -25,14 +22,14 @@ export function logError(error, context, additionalData = {}) {
 export function getUserFriendlyErrorMessage(error, defaultMessage = "Something went wrong. Please try again.") {
   // Check if error message is user-friendly (doesn't contain technical details)
   const technicalKeywords = ['undefined', 'null', 'TypeError', 'ReferenceError', 'SyntaxError', 'NetworkError']
-  const isTechnicalError = technicalKeywords.some(keyword => 
+  const isTechnicalError = technicalKeywords.some(keyword =>
     error.message.toLowerCase().includes(keyword.toLowerCase())
   )
-  
+
   if (isTechnicalError) {
     return defaultMessage
   }
-  
+
   return error.message || defaultMessage
 }
 
@@ -44,9 +41,9 @@ export function getUserFriendlyErrorMessage(error, defaultMessage = "Something w
  */
 export function handleApiError(error, operation) {
   logError(error, `API ${operation}`)
-  
+
   let userMessage = "Something went wrong. Please try again."
-  
+
   if (error.message.includes('Failed to fetch')) {
     userMessage = "Unable to connect to the server. Please check your internet connection."
   } else if (error.message.includes('500')) {
@@ -54,7 +51,7 @@ export function handleApiError(error, operation) {
   } else if (error.message.includes('404')) {
     userMessage = "The requested resource was not found."
   }
-  
+
   return {
     message: userMessage,
     originalError: error

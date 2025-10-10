@@ -47,7 +47,6 @@ app.post("/analyze-image", upload.single('image'), async (req, res) => {
     const result = await aiService.analyzeBookshelfImage(base64Image);
     res.json(result);
   } catch (err) {
-    console.error("Error in analyze-image route:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -60,7 +59,6 @@ app.post("/recommend-books", async (req, res) => {
     const recommendations = await aiService.getBookRecommendations(currentBooks, preferredGenres, previouslyChosenBooks);
     res.json(recommendations); // Return array directly
   } catch (err) {
-    console.error("Error:", err);
     res.status(500).json({ error: err.message });
   }
 });
@@ -71,30 +69,29 @@ app.get("/", (req, res) => {
   
 
 // ---------- SERVER START ----------
-const PORT = process.env.PORT || 5001;
-const HOST = process.env.BACKEND_HOST || '0.0.0.0';
+const PORT = parseInt(process.env.PORT) || 5001;
+const HOST = process.env.BACKEND_HOST || 'localhost';
+
+// Validate PORT is a number
+if (isNaN(PORT) || PORT < 1 || PORT > 65535) {
+  process.exit(1);
+}
 
 const server = app.listen(PORT, HOST, () => {
-  console.log(`Backend running on ${HOST}:${PORT}`)
-  console.log(`API endpoints:`)
-  console.log(`   POST http://${HOST}:${PORT}/analyze-image`)
-  console.log(`   POST http://${HOST}:${PORT}/recommend-books`)
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`)
+  console.log(`Backend running on http://${HOST}:${PORT}`)
 })
 
 // Handle server errors
 server.on('error', (error) => {
   if (error.code === 'EADDRINUSE') {
-    console.error(`Port ${PORT} is already in use. Please try a different port.`)
   } else {
-    console.error('Server error:', error)
   }
   process.exit(1)
 })
 
 // Graceful shutdown
 process.on('SIGTERM', () => {
-  console.log(' SIGTERM received, shutting down gracefully')
+  console.log('SIGTERM received, shutting down gracefully')
   server.close(() => {
     console.log('Server closed')
     process.exit(0)
@@ -102,9 +99,9 @@ process.on('SIGTERM', () => {
 })
 
 process.on('SIGINT', () => {
-  console.log(' SIGINT received, shutting down gracefully')
+  console.log('SIGINT received, shutting down gracefully')
   server.close(() => {
-    console.log(' Server closed')
+    console.log('Server closed')
     process.exit(0)
   })
 })

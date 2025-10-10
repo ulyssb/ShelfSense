@@ -9,26 +9,27 @@ import { logError, handleApiError } from '../utils/errorHandling.js'
  * @param {string[]} previouslyChosenBooks - Array of previously recommended books to avoid
  * @returns {Promise<Array>} Array of recommendations with IDs
  */
-export async function generateRecommendations(currentBooks, preferredGenres, previouslyChosenBooks = []) {
+export async function generateRecommendations(currentBooks, preferredGenres, previouslyChosenBooks = [], signal = null) {
   try {
-    console.log("Generating recommendations with:", { currentBooks, preferredGenres, previouslyChosenBooks })
-    const aiRecommendations = await recommendBooks(currentBooks, preferredGenres, previouslyChosenBooks)
-    console.log("AI response:", aiRecommendations)
-    
+    const aiRecommendations = await recommendBooks(currentBooks, preferredGenres, previouslyChosenBooks, signal)
+
     // Add IDs to the recommendations
     const newRecommendations = aiRecommendations.map((rec, index) => ({
       ...rec,
       id: index + 1
     }))
-    
-    console.log("AI generated recommendations:", newRecommendations)
+
     return newRecommendations
   } catch (error) {
+    // Don't fallback if request was cancelled
+    if (error.message === "Request was cancelled") {
+      throw error;
+    }
+
     const apiError = handleApiError(error, 'recommendation generation')
     logError(error, 'RecommendationService', { currentBooks, preferredGenres, previouslyChosenBooks })
-    
+
     // Fallback to hardcoded recommendations if AI fails
-    console.log("Falling back to hardcoded recommendations due to:", apiError.message)
     return FALLBACK_RECOMMENDATIONS
   }
 }
