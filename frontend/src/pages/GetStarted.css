@@ -86,7 +86,7 @@
 .step-card {
   text-align: center;
   border: none;
-  box-shadow: 0 4px 16px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
   margin: 3rem auto 2rem auto;
   padding: 2rem;
   max-width: 800px;
@@ -102,13 +102,13 @@
 .step-card.step-2 {
   background: linear-gradient(135deg, var(--accent) 0%, var(--accent-secondary) 100%);
   color: white;
-  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 16px rgba(96, 165, 250, 0.3);
 }
 
 .step-card.step-3 {
   background: linear-gradient(135deg, var(--accent-secondary) 0%, var(--primary) 100%);
   color: white;
-  box-shadow: 0 4px 16px rgba(20, 184, 166, 0.3);
+  box-shadow: 0 4px 16px rgba(147, 197, 253, 0.3);
 }
 
 .step-title {
@@ -284,7 +284,7 @@
   border-radius: 8px;
   font-size: 1rem;
   font-weight: 600;
-  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.3);
+  box-shadow: 0 4px 16px rgba(96, 165, 250, 0.3);
 }
 
 .step2-loading .loading-spinner {

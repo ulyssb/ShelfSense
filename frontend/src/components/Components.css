@@ -271,7 +271,7 @@
   background: linear-gradient(135deg, var(--primary) 0%, var(--accent) 100%);
   color: white;
   border: none;
-  box-shadow: 0 8px 32px rgba(79, 70, 229, 0.3);
+  box-shadow: 0 8px 32px rgba(59, 130, 246, 0.3);
 }
 
 .cta-title {
